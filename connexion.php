@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_email'] = $row['email'];
                 $_SESSION['user_nom'] = $row['nom'];
                 // Rediriger vers la page d'accueil ou toute autre page désirée
-                header("Location: home.html");
+                header("Location: home.php");
 
                 exit();
             } else {
