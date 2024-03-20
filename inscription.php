@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Préparation de la requête SQL pour insérer un nouvel utilisateur dans la table
-    $sql = "INSERT INTO users (nom, prenom, email, motdepasse) VALUES ('$nom', '$prenom', '$email', '$motdepasse')";
+    $sql = "INSERT INTO users (nom, prenom, email, motdepasse) VALUES ('$nom', '$prenom', '$email', '$mot_de_passe_hash')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Inscription réussie !";
