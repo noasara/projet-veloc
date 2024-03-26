@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +10,8 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <h1>Bienvenue</h1>
+    <a href="./deconnexion.php">deco</a>
+    <h1>Bienvenue <?php $user_id = $_SESSION['user_id'];  echo $user_id; ?> </h1>
 
     <b>Vous êtes à la recherche d'un vélo ?</b> <br><br>
     <form action="./home.php" method="GET">
@@ -19,22 +23,24 @@
     <b>Vous souhaitez louer votre vélo ?</b> <br><br>
     <form action="./traitement.php" method="POST">
         <label for="select-type">Ajoutez votre vélo :</label>
-        <select id="type" name="type" >
-            <option value="">--Type de votre vélo--</option>
-            <option value="route">Velo route</option>
-            <option value="vtt">VTT</option>
-            <option value="urbain">Velo ville</option>
-            <option value="electrique">Velo electrique</option>
-            <option value="course">Velo course</option>
-        </select>
-
+        
         <select id="marque" name="marque" >
             <option value="">--Marque de votre vélo--</option>
             <option value="btwin">Btwin</option>
             <option value="triban">Triban</option>
             <option value="scott">Scott</option>
             <option value="BMC">BMC</option>
-            
+        </select>
+
+        <input type="text" id="prixloc" name="prixloc" pattern="[1-5]?[0-9]|60" placeholder="Entrez le prix de location de votre vélo" required>
+
+        <select id="type" name="typ" >
+            <option value="">--Type de votre vélo--</option>
+            <option value="route">Velo route</option>
+            <option value="vtt">VTT</option>
+            <option value="urbain">Velo ville</option>
+            <option value="electrique">Velo electrique</option>
+            <option value="course">Velo course</option>
         </select>
 
         <button type="submit">Soumettre</button>
@@ -71,7 +77,7 @@
             echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
             echo "<ul>";
             while ($row = $result->fetch_assoc()) {
-                echo "<li>" . $row["marque"] ." ". $row["modele"]. " ".$row["prixloc"] . " euros". "</li>";
+                echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". "</li>";
             }
             echo "</ul>";
         } else {

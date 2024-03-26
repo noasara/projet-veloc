@@ -1,8 +1,16 @@
 <?php
+session_start();
 // Vérification si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Vérification si le champ "types" est défini et non vide
-    if (isset($_POST["types"]) && !empty($_POST["types"])) {
+    // Vérification si toutes les données requises sont présentes
+    if (isset($_POST["typ"], $_POST["marque"], $_POST["prixloc"])) {
+        // Récupération des données soumises
+        $typ = $_POST["typ"];
+        $marque = $_POST["marque"];
+    
+        $prixloc = $_POST["prixloc"];
+        $user_id = $_SESSION["user_id"];
+
         // Connexion à la base de données
         $servername = "localhost";
         $username = "root";
@@ -15,30 +23,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die("La connexion à la base de données a échoué : " . $conn->connect_error);
         }
 
-        // Récupération des valeurs soumises du champ "types" (tableau)
-        $types = $_POST["types"];
-
-        // Préparation de la requête SQL pour insérer les choix multiples dans la base de données
-        $sql = "INSERT INTO velo VALUES (idproprio, marque, prixloc, typ)";
-        $values = array();
-        foreach ($types as $type) {
-            $values[] = "('" . $conn->real_escape_string($type) . "')";
-        }
-        $sql .= implode(", ", $values);
+        // Préparation de la requête SQL pour insérer les données dans la table velo
+        $sql = "INSERT INTO velo (idproprio, marque, prixloc, typ) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isis", $user_id, $marque, $prixloc, $typ);
 
         // Exécution de la requête SQL
-        if ($conn->query($sql) === TRUE) {
-            echo "Les types de vélo ont été ajoutés avec succès.";
+        if ($stmt->execute()) {
+            // Afficher une alerte en JavaScript pour informer l'utilisateur que le vélo a été ajouté avec succès
+            echo "Le vélo a été ajouté avec succès !";
+            
         } else {
-            echo "Erreur lors de l'ajout des types de vélo : " . $conn->error;
+            echo "Erreur lors de l'insertion des données : " . $conn->error;
         }
 
-        // Fermeture de la connexion à la base de données
+        // Fermeture du statement et de la connexion à la base de données
+        $stmt->close();
         $conn->close();
     } else {
-        echo "Aucun type de vélo sélectionné.";
+        echo "Toutes les données requises n'ont pas été soumises.";
     }
 } else {
     echo "Le formulaire n'a pas été soumis.";
 }
 ?>
+<br>
+<a href="./home.php">Retourner sur la page d'accueil ?</a>
