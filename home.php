@@ -45,7 +45,7 @@ session_start();
 
         <button type="submit">Soumettre</button>
     </form>
-
+    <?php $user_id = $_SESSION['user_id'];?>
     <?php 
     // Paramètres de connexion à la base de données
     $servername = "localhost";
@@ -68,19 +68,23 @@ session_start();
 
         // Préparation de la requête SQL pour rechercher les vélos
         $sql = "SELECT * FROM velo WHERE marque LIKE '%$search_query%' OR typ LIKE '%$search_query%' ";
+        // $sql2 = "SELECT * FROM users";
 
         // Exécution de la requête SQL
         $result = $conn->query($sql);
+        // $result2 = $conn->query($sql2);
 
        // Affichage des résultats de la recherche
 if ($result->num_rows > 0) {
     echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
     echo "<ul>";
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()){
+    // &&($row2 = $result2->fetch_assoc())) 
         $idvelo = $row['id'];
-        $iduser = $row['iduser'];
-        echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&iduser=$iduser';\">Réserver</button></li>";
-        
+        // $iduser = $row2['id'];
+        echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&user_id=$user_id';\">Réserver</button></li>";
+        // &iduser=$iduser'
+        echo "<br>";
     }
     echo "</ul>";
 } else {
