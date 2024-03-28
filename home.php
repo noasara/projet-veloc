@@ -10,8 +10,8 @@ session_start();
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <a href="./deconnexion.php">deco</a>
-    <h1>Bienvenue <?php $user_id = $_SESSION['user_id'];  echo $user_id; ?> </h1>
+    <a href="./deconnexion.php">Déconnexion</a>
+    <h1>Bonjour <?php $user_nom = $_SESSION['user_nom'];  echo $user_nom; ?> </h1>
 
     <b>Vous êtes à la recherche d'un vélo ?</b> <br><br>
     <form action="./home.php" method="GET">
@@ -72,21 +72,24 @@ session_start();
         // Exécution de la requête SQL
         $result = $conn->query($sql);
 
-        // Affichage des résultats de la recherche
-        if ($result->num_rows > 0) {
-            echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
-            echo "<ul>";
-            while ($row = $result->fetch_assoc()) {
-                echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". "</li>";
-            }
-            echo "</ul>";
-        } else {
-            echo "<p>Aucun résultat trouvé pour : <strong>$search_query</strong></p>";
-        }
-    } else {
-        // Si le paramètre de recherche n'est pas présent dans l'URL, afficher un message d'erreur
-        echo "<p>Aucun terme de recherche n'a été spécifié.</p>";
+       // Affichage des résultats de la recherche
+if ($result->num_rows > 0) {
+    echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
+    echo "<ul>";
+    while ($row = $result->fetch_assoc()) {
+        $idvelo = $row['id'];
+        $iduser = $row['iduser'];
+        echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&iduser=$iduser';\">Réserver</button></li>";
+        
     }
+    echo "</ul>";
+} else {
+    echo "<p>Aucun résultat trouvé pour : <strong>$search_query</strong></p>";
+}
+     } //else {
+    //     // Si le paramètre de recherche n'est pas présent dans l'URL, afficher un message d'erreur
+    //     echo "<p>Aucun terme de recherche n'a été spécifié.</p>";
+    // }
 
     // Fermeture de la connexion à la base de données
     $conn->close();
