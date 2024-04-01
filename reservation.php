@@ -11,6 +11,7 @@ session_start();
 </head>
 <body>
 <a href="home.php">Accueil</a>
+<a href="compte.php">Mon compte</a>
     <h1>Réservation</h1>
     <form action="reservation.php" method="POST">
     <!-- Champs cachés pour les identifiants -->

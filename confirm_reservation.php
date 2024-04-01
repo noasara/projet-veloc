@@ -10,8 +10,9 @@ session_start();
     <title>Veloc - Confirmation</title>
 </head>
 <body>
-<a href="./deconnexion.php">Déconnexion</a>
 <a href="./home.php">Accueil</a>
+<a href="./deconnexion.php">Déconnexion</a>
+
 <h2>Réservation n°<?php if (isset($_SESSION['id_reservation'])) $id_reservation = $_SESSION['id_reservation']; echo $id_reservation; ?></h2>
 </body>
 </html>

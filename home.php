@@ -10,10 +10,8 @@ session_start();
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <a href="./compte.php">Mon compte</a>
     <a href="./deconnexion.php">Déconnexion</a>
-    <a href="./compte.php"><?php if (isset($_SESSION['user_prenom'])) 
-        $prenom = $_SESSION['user_prenom'];
-        echo  $prenom;?></a>
 
     <h1> <?php if (isset($_SESSION['user_prenom'])) 
         $prenom = $_SESSION['user_prenom'];
@@ -26,8 +24,8 @@ session_start();
         <button type="submit">Rechercher</button>
     </form>
     <br>
-    <b>Vous souhaitez louer votre vélo ?</b> <br><br>
-    <form action="./traitement.php" method="POST">
+    <b>Vous souhaitez prêter votre vélo ?</b> <br><br>
+    <form action="./home.php" method="POST">
         <label for="select-type">Ajoutez votre vélo :</label>
         
         <select id="marque" name="marque" >
@@ -49,6 +47,8 @@ session_start();
             <option value="electrique">Velo electrique</option>
             <option value="course">Velo course</option>
         </select>
+
+        <input type="text" id="couleur" name="couleur" placeholder="Entrez la couleur du vélo" required>
 
         <button type="submit">Ajouter</button>
     </form>
@@ -101,9 +101,60 @@ if ($result->num_rows > 0) {
     //     // Si le paramètre de recherche n'est pas présent dans l'URL, afficher un message d'erreur
     //     echo "<p>Aucun terme de recherche n'a été spécifié.</p>";
     // }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Vérification si toutes les données requises sont présentes
+        if (isset($_POST["typ"], $_POST["marque"], $_POST["couleur"])) {
+            // Récupération des données soumises
+            $typ = $_POST["typ"];
+            $marque = $_POST["marque"];
+            $couleur = $_POST['couleur'];
+            $user_id = $_SESSION["user_id"];
 
+        // Vérification de la connexion
+        if ($conn->connect_error) {
+            die("La connexion à la base de données a échoué : " . $conn->connect_error);
+        }
+        // Préparation de la requête SQL pour vérifier si le vélo existe déjà
+        $sql_check_bike = "SELECT id FROM velo WHERE idproprio = ? AND marque = ? AND couleur = ? AND typ = ?";
+        $stmt_check_bike = $conn->prepare($sql_check_bike);
+        $stmt_check_bike->bind_param("isss", $user_id, $marque, $couleur, $typ);
+
+        // Exécution de la requête de vérification
+        $stmt_check_bike->execute();
+        $stmt_check_bike->store_result();
+
+        // Vérification du nombre de lignes résultantes
+        if ($stmt_check_bike->num_rows > 0) {
+            echo "<br>Un vélo similaire existe déjà !";
+        } else {
+        // Préparation de la requête SQL pour insérer les données dans la table velo
+        $sql_ajout = "INSERT INTO velo (idproprio, marque, couleur, typ) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql_ajout);
+        $stmt->bind_param("isss", $user_id, $marque, $couleur, $typ);
+
+        // Exécution de la requête SQL
+        if ($stmt->execute()) {
+            // Afficher une alerte en JavaScript pour informer l'utilisateur que le vélo a été ajouté avec succès
+            echo "<br>Le vélo a été ajouté avec succès !";
+        } else {
+            echo "<br>Erreur lors de l'insertion des données : " . $conn->error;
+        }
+
+        // Fermeture du statement et de la connexion à la base de données
+        $stmt->close();
+        }
+        // Fermeture du statement de vérification et de la connexion à la base de données
+        $stmt_check_bike->close();
+        
+    
     // Fermeture de la connexion à la base de données
     $conn->close();
+} else {
+    echo "<br>Toutes les données requises n'ont pas été soumises.";
+}
+// } else {
+// echo "Le formulaire n'a pas été soumis.";
+}
     ?>
 </body>
 </html>
