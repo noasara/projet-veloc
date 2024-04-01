@@ -1,4 +1,33 @@
 <?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veloc - Connexion</title>
+</head>
+<body>
+    <h1>Connexion</h1>
+
+    <form id="connexion-form" action="./connexion.php" method="POST">
+        <div>
+          <label for="email">Email :</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+          <label for="motdepasse">Mot de passe :</label>
+          <input type="password" id="motdepasse" name="motdepasse" required>
+        </div>
+        <div>
+          <button type="submit">Se connecter</button>
+        </div>
+      </form>
+
+</body>
+</html>
+<?php
 // Connexion à la base de données
 $servername = "localhost"; // Adresse du serveur MySQL (généralement localhost)
 $username = "root"; // Nom d'utilisateur MySQL
@@ -36,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_start();
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['user_email'] = $row['email'];
-                $_SESSION['user_nom'] = $row['nom'];
+                $_SESSION['user_prenom'] = $row['prenom'];
                 // Rediriger vers la page d'accueil ou toute autre page désirée
                 header("Location: home.php");
 
@@ -61,3 +90,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Fermer la connexion à la base de données
 $conn->close();
 ?>
+

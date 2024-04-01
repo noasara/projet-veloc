@@ -6,12 +6,18 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veloc</title>
+    <title>Veloc - Accueil</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <a href="./deconnexion.php">Déconnexion</a>
-    <h1>Bonjour <?php $user_nom = $_SESSION['user_nom'];  echo $user_nom; ?> </h1>
+    <a href="./compte.php"><?php if (isset($_SESSION['user_prenom'])) 
+        $prenom = $_SESSION['user_prenom'];
+        echo  $prenom;?></a>
+
+    <h1> <?php if (isset($_SESSION['user_prenom'])) 
+        $prenom = $_SESSION['user_prenom'];
+        echo "Bonjour $prenom";?> </h1>
 
     <b>Vous êtes à la recherche d'un vélo ?</b> <br><br>
     <form action="./home.php" method="GET">
@@ -32,7 +38,8 @@ session_start();
             <option value="BMC">BMC</option>
         </select>
 
-        <input type="text" id="prixloc" name="prixloc" pattern="[1-5]?[0-9]|60" placeholder="Entrez le prix de location de votre vélo" required>
+        <!--Zone de saisie du prix du vélo -->
+        <!-- <input type="text" id="prixloc" name="prixloc" pattern="[1-5]?[0-9]|60" placeholder="Entrez le prix de location de votre vélo" required> -->
 
         <select id="type" name="typ" >
             <option value="">--Type de votre vélo--</option>
@@ -43,7 +50,7 @@ session_start();
             <option value="course">Velo course</option>
         </select>
 
-        <button type="submit">Soumettre</button>
+        <button type="submit">Ajouter</button>
     </form>
     <?php $user_id = $_SESSION['user_id'];?>
     <?php 
@@ -68,22 +75,22 @@ session_start();
 
         // Préparation de la requête SQL pour rechercher les vélos
         $sql = "SELECT * FROM velo WHERE marque LIKE '%$search_query%' OR typ LIKE '%$search_query%' ";
-        // $sql2 = "SELECT * FROM users";
+        
 
         // Exécution de la requête SQL
         $result = $conn->query($sql);
-        // $result2 = $conn->query($sql2);
+        
 
        // Affichage des résultats de la recherche
 if ($result->num_rows > 0) {
     echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
     echo "<ul>";
     while ($row = $result->fetch_assoc()){
-    // &&($row2 = $result2->fetch_assoc())) 
+     
         $idvelo = $row['id'];
-        // $iduser = $row2['id'];
-        echo "<li>" . $row["marque"] ." ".$row["prixloc"] . " euros". " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&user_id=$user_id';\">Réserver</button></li>";
-        // &iduser=$iduser'
+        
+        echo "<li>" . $row["marque"] ." ". $row["typ"] ." ". $row["couleur"] ." " . " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&user_id=$user_id';\">Réserver</button></li>";
+        
         echo "<br>";
     }
     echo "</ul>";
