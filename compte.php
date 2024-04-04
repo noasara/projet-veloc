@@ -24,25 +24,6 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("La connexion à la base de données a échoué : " . $conn->connect_error);
 }
-
-// Préparation de la requête SQL pour récupérer les réservations de l'utilisateur
-$sql_reservations = "SELECT reservation.*, velo.marque AS marque, velo.typ AS typ, velo.couleur AS couleur
-                    FROM reservation
-                    INNER JOIN velo ON reservation.idvelo = velo.id
-                    WHERE idloc = $user_id";
-
-
-// Exécution de la requête SQL pour les réservations
-$result_reservations = $conn->query($sql_reservations);
-
-// Vérification s'il y a des réservations
-$reservations = [];
-if ($result_reservations->num_rows > 0) {
-    // Récupération des réservations dans un tableau
-    while ($row = $result_reservations->fetch_assoc()) {
-        $reservations[] = $row;
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,12 +31,14 @@ if ($result_reservations->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>Veloc - Votre compte</title>
+    <title>Veloc - Mon compte</title>
 </head>
 <body>
 <a href="./home.php">Accueil</a>
 <a href="./deconnexion.php">Déconnexion</a>
-<h1>Votre Compte</h1>
+<h1>Mon Compte</h1>
+<a href="./mes_reserv.php">Mes réservations</a>
+<a href="./mes_velos.php">Mes vélos</a>
 <h2> <?php if (isset($_SESSION['user_prenom'])) 
         $prenom = $_SESSION['user_prenom'];
         echo "Bonjour $prenom";?> </h2>
@@ -149,57 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         echo "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre.";
     }
-}?>
-<h3>Mes réservations :</h3>
-<?php if (!empty($reservations)) : ?>
-        <ul>
-            <?php foreach ($reservations as $reservation) : ?>
-                <li>
-                    <b>ID de la réservation : <?php echo $reservation['id']; ?><br></b>
-                    Marque du vélo : <?php echo $reservation['marque']; ?><br>
-                    Type du vélo : <?php echo $reservation['typ']; ?><br>
-                    Couleur du vélo : <?php echo $reservation['couleur']; ?><br>
-                    Dates : Du <?php echo $reservation['datedebut']?> au <?php echo $reservation['datefin']; ?><br>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else : ?>
-        <p>Vous n'avez pas encore de réservation.</p>
-    <?php endif; ?>
-
-<h3>Mes vélos :</h3>
-<?php
-// Préparation de la requête SQL pour récupérer les vélos prêtés par l'utilisateur
-$sql_bikes = "SELECT velo.*
-              FROM velo
-              WHERE idproprio = $user_id";
-
-// Exécution de la requête SQL pour les vélos prêtés
-$result_bikes = $conn->query($sql_bikes);
-
-// Vérification s'il y a des vélos 
-$bikes = [];
-if ($result_bikes->num_rows > 0) {
-    // Récupération des vélos ajoutés dans un tableau
-    while ($row = $result_bikes->fetch_assoc()) {
-        $bikes[] = $row;
-    }
 }
-?>
-<?php if (!empty($bikes)) : ?>
-    <ul>
-        <?php foreach ($bikes as $bike) : ?>
-            <li>
-                <b>ID du vélo : <?php echo $bike['id']; ?></b><br>
-                Marque : <?php echo $bike['marque']; ?><br>
-                Type : Vélo <?php echo $bike['typ']; ?><br>
-                Couleur : <?php echo $bike['couleur']; ?><br><br>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-<?php else : ?>
-    <p>Vous n'avez pas encore de vélo prêté.</p>
-<?php endif; 
 // Fermeture de la connexion
     $conn->close();?>
 </body>
