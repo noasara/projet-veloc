@@ -36,9 +36,6 @@ session_start();
             <option value="BMC">BMC</option>
         </select>
 
-        <!--Zone de saisie du prix du vélo -->
-        <!-- <input type="text" id="prixloc" name="prixloc" pattern="[1-5]?[0-9]|60" placeholder="Entrez le prix de location de votre vélo" required> -->
-
         <select id="type" name="typ" >
             <option value="">--Type de votre vélo--</option>
             <option value="route">Velo route</option>
@@ -52,109 +49,52 @@ session_start();
 
         <button type="submit">Ajouter</button>
     </form>
-    <?php $user_id = $_SESSION['user_id'];?>
     <?php 
-    // Paramètres de connexion à la base de données
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "veloc_old";
-
-    // Connexion à la base de données
-    $conn = new mysqli($servername, $username, $password, $database);
-
-    // Vérification de la connexion
-    if ($conn->connect_error) {
-        die("La connexion à la base de données a échoué : " . $conn->connect_error);
-    }
-
     // Vérification si le paramètre de recherche est présent dans l'URL
     if (isset($_GET['q'])) {
         // Récupération du terme de recherche
         $search_query = $_GET['q'];
 
-        // Préparation de la requête SQL pour rechercher les vélos
-        $sql = "SELECT * FROM velo WHERE marque LIKE '%$search_query%' OR typ LIKE '%$search_query%' ";
-        
+        // Récupération de l'ID de l'utilisateur connecté
+        $user_id = $_SESSION['user_id'];
 
-        // Exécution de la requête SQL
-        $result = $conn->query($sql);
-        
+        // Paramètres de connexion à la base de données
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $database = "veloc_old";
 
-       // Affichage des résultats de la recherche
-if ($result->num_rows > 0) {
-    echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
-    echo "<ul>";
-    while ($row = $result->fetch_assoc()){
-     
-        $idvelo = $row['id'];
-        
-        echo "<li>" . $row["marque"] ." ". $row["typ"] ." ". $row["couleur"] ." " . " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&user_id=$user_id';\">Réserver</button></li>";
-        
-        echo "<br>";
-    }
-    echo "</ul>";
-} else {
-    echo "<p>Aucun résultat trouvé pour : <strong>$search_query</strong></p>";
-}
-     } //else {
-    //     // Si le paramètre de recherche n'est pas présent dans l'URL, afficher un message d'erreur
-    //     echo "<p>Aucun terme de recherche n'a été spécifié.</p>";
-    // }
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Vérification si toutes les données requises sont présentes
-        if (isset($_POST["typ"], $_POST["marque"], $_POST["couleur"])) {
-            // Récupération des données soumises
-            $typ = $_POST["typ"];
-            $marque = $_POST["marque"];
-            $couleur = $_POST['couleur'];
-            $user_id = $_SESSION["user_id"];
+        // Connexion à la base de données
+        $conn = new mysqli($servername, $username, $password, $database);
 
         // Vérification de la connexion
         if ($conn->connect_error) {
             die("La connexion à la base de données a échoué : " . $conn->connect_error);
         }
-        // Préparation de la requête SQL pour vérifier si le vélo existe déjà
-        $sql_check_bike = "SELECT id FROM velo WHERE idproprio = ? AND marque = ? AND couleur = ? AND typ = ?";
-        $stmt_check_bike = $conn->prepare($sql_check_bike);
-        $stmt_check_bike->bind_param("isss", $user_id, $marque, $couleur, $typ);
 
-        // Exécution de la requête de vérification
-        $stmt_check_bike->execute();
-        $stmt_check_bike->store_result();
-
-        // Vérification du nombre de lignes résultantes
-        if ($stmt_check_bike->num_rows > 0) {
-            echo "<br>Un vélo similaire existe déjà !";
-        } else {
-        // Préparation de la requête SQL pour insérer les données dans la table velo
-        $sql_ajout = "INSERT INTO velo (idproprio, marque, couleur, typ) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql_ajout);
-        $stmt->bind_param("isss", $user_id, $marque, $couleur, $typ);
+        // Préparation de la requête SQL pour rechercher les vélos (en excluant les vélos de l'utilisateur connecté)
+        $sql = "SELECT * FROM velo WHERE (marque LIKE '%$search_query%' OR typ LIKE '%$search_query%') AND idproprio <> $user_id";
 
         // Exécution de la requête SQL
-        if ($stmt->execute()) {
-            // Afficher une alerte en JavaScript pour informer l'utilisateur que le vélo a été ajouté avec succès
-            echo "<br>Le vélo a été ajouté avec succès !";
+        $result = $conn->query($sql);
+
+        // Affichage des résultats de la recherche
+        if ($result->num_rows > 0) {
+            echo "<p>Résultats de la recherche pour : <strong>$search_query</strong></p>";
+            echo "<ul>";
+            while ($row = $result->fetch_assoc()) {
+                $idvelo = $row['id'];
+                echo "<li>" . $row["marque"] ." ". $row["typ"] ." ". $row["couleur"] ." " . " <button onclick=\"window.location.href='reservation.php?idvelo=$idvelo&user_id=$user_id';\">Réserver</button></li>";
+                echo "<br>";
+            }
+            echo "</ul>";
         } else {
-            echo "<br>Erreur lors de l'insertion des données : " . $conn->error;
+            echo "<p>Aucun résultat trouvé pour : <strong>$search_query</strong></p>";
         }
 
-        // Fermeture du statement et de la connexion à la base de données
-        $stmt->close();
-        }
-        // Fermeture du statement de vérification et de la connexion à la base de données
-        $stmt_check_bike->close();
-        
-    
-    // Fermeture de la connexion à la base de données
-    $conn->close();
-} else {
-    echo "<br>Toutes les données requises n'ont pas été soumises.";
-}
-// } else {
-// echo "Le formulaire n'a pas été soumis.";
-}
+        // Fermeture de la connexion à la base de données
+        $conn->close();
+    }
     ?>
 </body>
 </html>

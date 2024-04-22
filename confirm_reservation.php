@@ -63,7 +63,7 @@ if (isset($_SESSION['id_reservation'])) {
     } else {
     echo "Aucune réservation trouvée avec l'identifiant fourni.";
     }
-        //Création d'un pdf téléchargeable
+        //Création d'un txt téléchargeable
         $contenu_recap = "Récapitulatif de la réservation :\n";
         $contenu_recap .= "N° de réservation : $id_reservation\n";
         $contenu_recap .= "Marque du vélo : $marque\n";
@@ -72,7 +72,7 @@ if (isset($_SESSION['id_reservation'])) {
         $contenu_recap .= "Dates de réservation : Du $datedebut au $datefin\n";
 
         // Nom du fichier temporaire
-        $nom_fichier = "recap_reservation_$id_reservation.pdf";
+        $nom_fichier = "recap_reservation_$id_reservation.txt";
 
         // Chemin du fichier temporaire
         $chemin_fichier = "./$nom_fichier";
@@ -82,7 +82,7 @@ if (isset($_SESSION['id_reservation'])) {
 
         // Fournir un lien de téléchargement vers le fichier texte temporaire
         echo "<p>Téléchargez ci-dessus le récapitulatif de votre réservation :</p>";
-        echo "<a href='$chemin_fichier' download='recap_reservation_$id_reservation.pdf'>Télécharger</a>";
+        echo "<a href='$chemin_fichier' download='recap_reservation_$id_reservation.txt'>Télécharger</a>";
     }
         
 
