@@ -24,31 +24,6 @@ session_start();
         <button type="submit">Rechercher</button>
     </form>
     <br>
-    <b>Vous souhaitez prêter votre vélo ?</b> <br><br>
-    <form action="./home.php" method="POST">
-        <label for="select-type">Ajoutez votre vélo :</label>
-        
-        <select id="marque" name="marque" >
-            <option value="">--Marque de votre vélo--</option>
-            <option value="btwin">Btwin</option>
-            <option value="triban">Triban</option>
-            <option value="scott">Scott</option>
-            <option value="BMC">BMC</option>
-        </select>
-
-        <select id="type" name="typ" >
-            <option value="">--Type de votre vélo--</option>
-            <option value="route">Velo route</option>
-            <option value="vtt">VTT</option>
-            <option value="urbain">Velo ville</option>
-            <option value="electrique">Velo electrique</option>
-            <option value="course">Velo course</option>
-        </select>
-
-        <input type="text" id="couleur" name="couleur" placeholder="Entrez la couleur du vélo" required>
-
-        <button type="submit">Ajouter</button>
-    </form>
     <?php 
     // Vérification si le paramètre de recherche est présent dans l'URL
     if (isset($_GET['q'])) {
@@ -91,10 +66,76 @@ session_start();
         } else {
             echo "<p>Aucun résultat trouvé pour : <strong>$search_query</strong></p>";
         }
-
-        // Fermeture de la connexion à la base de données
-        $conn->close();
     }
     ?>
+    <br>
+    <b>Vous souhaitez prêter votre vélo ?</b> <br><br>
+    <form action="./home.php" method="POST">
+        <label for="select-type">Ajoutez votre vélo :</label>
+        
+        <select id="marque" name="marque" >
+            <option value="">--Marque de votre vélo--</option>
+            <option value="btwin">Btwin</option>
+            <option value="triban">Triban</option>
+            <option value="scott">Scott</option>
+            <option value="BMC">BMC</option>
+        </select>
+
+        <select id="type" name="typ" >
+            <option value="">--Type de votre vélo--</option>
+            <option value="route">Velo route</option>
+            <option value="vtt">VTT</option>
+            <option value="urbain">Velo ville</option>
+            <option value="electrique">Velo electrique</option>
+            <option value="course">Velo course</option>
+        </select>
+
+        <input type="text" id="couleur" name="couleur" placeholder="Entrez la couleur du vélo" required>
+
+        <button type="submit">Ajouter</button>
+    </form>
+    <?php
+
+     // Paramètres de connexion à la base de données
+     $servername = "localhost";
+     $username = "root";
+     $password = "";
+     $database = "veloc_old";
+
+     // Connexion à la base de données
+     $conn = new mysqli($servername, $username, $password, $database);
+    // Vérifier la connexion
+if ($conn->connect_error) {
+    die("La connexion à la base de données a échoué : " . $conn->connect_error);
+}
+// Récupération de l'ID de l'utilisateur connecté
+$user_id = $_SESSION['user_id'];
+
+// Traitement des données du formulaire après la connexion réussie
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupérer les valeurs du formulaire
+    $marque = $_POST["marque"];
+    $typ = $_POST["typ"];
+    $couleur = $_POST["couleur"];
+
+    // Préparer et exécuter la requête SQL d'insertion
+    $sql = "INSERT INTO velo (idproprio, marque, typ, couleur) VALUES ('$user_id','$marque', '$typ', '$couleur')";
+    
+    
+
+// Vérification du résultat
+if ($conn->query($sql) === TRUE) {
+
+    //Redirection 
+    header("Location: ok.php");
+} else {
+    // Si l'insertion a échoué, afficher un message d'erreur
+    echo "Erreur lors de l'ajout du vélo : " . $conn->error;
+}
+}
+
+// Fermer la connexion à la base de données
+$conn->close();
+?>
 </body>
 </html>

@@ -62,6 +62,11 @@ if ($conn->connect_error) {
         <button type="submit">Enregistrer les modifications</button>
     </form>
 
+    <h3>Supprimer mon compte :</h3>
+    <form action="supprimeCompte.php" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+        <button type="submit" name="supprimer_compte">Supprimer mon compte</button>
+    </form>
+
 
 <!-- Script JavaScript -->
 <script>
