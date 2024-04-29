@@ -6,6 +6,6 @@ session_start();
 session_destroy();
 
 // Redirige l'utilisateur vers la page de connexion ou toute autre page souhaitée après la déconnexion
-header("Location: connexion.html");
+header("Location: connexion.php");
 exit();
 ?>

@@ -23,12 +23,14 @@ session_start();
         <input type="text" id="search" name="q" placeholder="Entrez votre recherche..." required>
         <button type="submit">Rechercher</button>
     </form>
+    
     <br>
     <?php 
     // Vérification si le paramètre de recherche est présent dans l'URL
     if (isset($_GET['q'])) {
         // Récupération du terme de recherche
         $search_query = $_GET['q'];
+    
 
         // Récupération de l'ID de l'utilisateur connecté
         $user_id = $_SESSION['user_id'];
@@ -48,7 +50,7 @@ session_start();
         }
 
         // Préparation de la requête SQL pour rechercher les vélos (en excluant les vélos de l'utilisateur connecté)
-        $sql = "SELECT * FROM velo WHERE (marque LIKE '%$search_query%' OR typ LIKE '%$search_query%') AND idproprio <> $user_id";
+        $sql = "SELECT * FROM velo WHERE (marque LIKE '%$search_query%' OR typ LIKE '%$search_query%' OR couleur LIKE '%$search_query%') AND idproprio <> $user_id";
 
         // Exécution de la requête SQL
         $result = $conn->query($sql);
@@ -94,6 +96,7 @@ session_start();
 
         <button type="submit">Ajouter</button>
     </form>
+    <br>
     <?php
 
      // Paramètres de connexion à la base de données

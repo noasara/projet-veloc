@@ -67,7 +67,7 @@ if ($result_bikes->num_rows > 0) {
                 <!-- Formulaire de suppression -->
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <input type="hidden" name="idvelo" value="<?php echo $bike['id']; ?>">
-                    <button type="submit" name="delete_bike">Supprimer</button><br>
+                    <button type="submit" name="delete_bike">Supprimer</button><br><br>
                     <?php
                         // Vérifier si la requête de suppression a été soumise et si l'ID du vélo correspond à celui en cours de traitement
                         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_bike']) && $_POST['idvelo'] == $bike['id']) {
@@ -106,7 +106,8 @@ if ($result_bikes->num_rows > 0) {
         <?php endforeach; ?>
     </ul>
 <?php else : ?>
-    <p>Vous n'avez pas encore de vélo prêté.</p>
+    <p>Vous n'avez pas encore de vélo à prêter.</p>
 <?php endif; ?>
+<a href="./home.php"><button type="button">Ajouter un vélo</button></a>
 </body>
 </html>
